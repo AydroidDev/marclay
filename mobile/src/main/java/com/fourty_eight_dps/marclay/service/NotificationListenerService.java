@@ -1,8 +1,8 @@
 package com.fourty_eight_dps.marclay.service;
 
 import android.service.notification.StatusBarNotification;
-import com.fourty_eight_dps.marclay.firebase.RemoteNotificationManager;
-import com.fourty_eight_dps.marclay.firebase.SyncedNotification;
+import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
+import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 
 public class NotificationListenerService
     extends android.service.notification.NotificationListenerService {

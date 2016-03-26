@@ -1,4 +1,4 @@
-package com.fourty_eight_dps.marclay.firebase;
+package com.fourty_eight_dps.marclay.core.firebase;
 
 import com.firebase.client.Firebase;
 
