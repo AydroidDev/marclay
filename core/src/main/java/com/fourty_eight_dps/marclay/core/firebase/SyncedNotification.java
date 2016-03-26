@@ -1,6 +1,7 @@
 package com.fourty_eight_dps.marclay.core.firebase;
 
 import android.service.notification.StatusBarNotification;
+import com.firebase.client.DataSnapshot;
 
 public class SyncedNotification {
 
@@ -8,7 +9,7 @@ public class SyncedNotification {
   private final String message;
 
   public SyncedNotification(String key, String message) {
-    this.key = key.replace('.','_');
+    this.key = key.replace('.', '_');
     this.message = message;
   }
 
@@ -22,5 +23,16 @@ public class SyncedNotification {
 
   public static SyncedNotification create(StatusBarNotification sbn) {
     return new SyncedNotification(sbn.getKey(), sbn.getNotification().tickerText.toString());
+  }
+
+  public static SyncedNotification create(DataSnapshot snapshot) {
+    return new SyncedNotification(snapshot.getKey(), snapshot.getValue().toString());
+  }
+
+  @Override public String toString() {
+    return "SyncedNotification{" +
+        "key='" + key + '\'' +
+        ", message='" + message + '\'' +
+        '}';
   }
 }
