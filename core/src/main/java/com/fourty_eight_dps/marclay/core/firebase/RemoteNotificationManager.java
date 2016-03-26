@@ -1,5 +1,6 @@
 package com.fourty_eight_dps.marclay.core.firebase;
 
+import android.content.Context;
 import com.firebase.client.Firebase;
 
 public class RemoteNotificationManager {
@@ -21,5 +22,9 @@ public class RemoteNotificationManager {
   public void removeNotification(SyncedNotification syncedNotification) {
     firebase.child(syncedNotification.getKey())
         .removeValue();
+  }
+
+  public static void setAndroidContext(Context context) {
+    Firebase.setAndroidContext(context);
   }
 }
