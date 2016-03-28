@@ -1,14 +1,14 @@
 package com.fourty_eight_dps.marclay;
 
 import android.app.Activity;
-import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
-import android.widget.TextView;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 import com.fourty_eight_dps.marclay.video.MoviePlayer;
@@ -22,8 +22,10 @@ public class MainActivity extends Activity
 
   MoviePlayer.PlayTask playTask;
   RemoteNotificationManager remoteNotificationManager;
-  TextView textView;
+
   TextureView textureView;
+  RecyclerView recyclerView;
+  NotificationAdapter notificationAdapter;
 
   private boolean surefaceTextureReady = false;
 
@@ -33,9 +35,15 @@ public class MainActivity extends Activity
     remoteNotificationManager = new RemoteNotificationManager();
     setContentView(R.layout.activity_main);
 
-    textView = (TextView) findViewById(R.id.notification);
     textureView = (TextureView) findViewById(R.id.texture);
     textureView.setSurfaceTextureListener(this);
+
+    notificationAdapter = new NotificationAdapter();
+    recyclerView = (RecyclerView) findViewById(android.R.id.list);
+    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+    linearLayoutManager.setAutoMeasureEnabled(true);
+    recyclerView.setLayoutManager(linearLayoutManager);
+    recyclerView.setAdapter(notificationAdapter);
   }
 
   @Override protected void onStart() {
@@ -49,11 +57,11 @@ public class MainActivity extends Activity
   }
 
   @Override public void onNotificationPosted(SyncedNotification syncedNotification) {
-    textView.setText("Added: " + syncedNotification.toString());
+    notificationAdapter.add(syncedNotification);
   }
 
   @Override public void onNotificationRemoved(SyncedNotification syncedNotification) {
-    textView.setText("Removed: " + syncedNotification.toString());
+    notificationAdapter.remove(syncedNotification);
   }
 
   @Override public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
@@ -82,34 +90,5 @@ public class MainActivity extends Activity
 
   @Override public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {}
 
-  /**
-   * Sets the TextureView transform to preserve the aspect ratio of the video.
-   */
-  private void adjustAspectRatio(int videoWidth, int videoHeight) {
-    int viewWidth = textureView.getWidth();
-    int viewHeight = textureView.getHeight();
-    double aspectRatio = (double) videoHeight / videoWidth;
-
-    int newWidth, newHeight;
-    if (viewHeight > (int) (viewWidth * aspectRatio)) {
-      // limited by narrow width; restrict height
-      newWidth = viewWidth;
-      newHeight = (int) (viewWidth * aspectRatio);
-    } else {
-      // limited by short height; restrict width
-      newWidth = (int) (viewHeight / aspectRatio);
-      newHeight = viewHeight;
-    }
-    int xoff = (viewWidth - newWidth) / 2;
-    int yoff = (viewHeight - newHeight) / 2;
-
-    Matrix txform = new Matrix();
-    textureView.getTransform(txform);
-    txform.setScale((float) newWidth / viewWidth, (float) newHeight / viewHeight);
-    txform.postTranslate(xoff, yoff);
-    textureView.setTransform(txform);
-  }
-
   @Override public void playbackStopped() {}
-
 }

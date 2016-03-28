@@ -3,7 +3,7 @@ package com.fourty_eight_dps.marclay.core.firebase;
 import android.service.notification.StatusBarNotification;
 import com.firebase.client.DataSnapshot;
 
-public class SyncedNotification {
+public class SyncedNotification implements Comparable<SyncedNotification> {
 
   private final String key;
   private final String message;
@@ -34,5 +34,9 @@ public class SyncedNotification {
         "key='" + key + '\'' +
         ", message='" + message + '\'' +
         '}';
+  }
+
+  @Override public int compareTo(SyncedNotification syncedNotification) {
+    return message.compareTo(syncedNotification.getMessage());
   }
 }
