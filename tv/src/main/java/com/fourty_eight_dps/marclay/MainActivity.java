@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 import com.fourty_eight_dps.marclay.video.MoviePlayer;
+import com.fourty_eight_dps.marclay.video.SpeedControlCallback;
 import java.io.File;
 import java.io.IOException;
 
@@ -62,19 +63,8 @@ public class MainActivity extends Activity
       File file = new File(Environment.getExternalStorageDirectory(), "example.mp4");
       Log.d("FILE", file.getAbsolutePath());
       MoviePlayer player = null;
-      player = new MoviePlayer(file, surface, new MoviePlayer.FrameCallback() {
-        @Override public void preRender(long presentationTimeUsec) {
-
-        }
-
-        @Override public void postRender() {
-
-        }
-
-        @Override public void loopReset() {
-
-        }
-      });
+      SpeedControlCallback callback = new SpeedControlCallback();
+      player = new MoviePlayer(file, surface, callback);
       playTask = new MoviePlayer.PlayTask(player, this);
       playTask.setLoopMode(true);
       playTask.execute();
