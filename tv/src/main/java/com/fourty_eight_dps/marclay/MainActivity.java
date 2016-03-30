@@ -3,18 +3,12 @@ package com.fourty_eight_dps.marclay;
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Surface;
 import android.view.TextureView;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 import com.fourty_eight_dps.marclay.video.MoviePlayer;
-import com.fourty_eight_dps.marclay.video.SpeedControlCallback;
-import java.io.File;
-import java.io.IOException;
 
 public class MainActivity extends Activity
     implements RemoteNotificationManager.NotificationListener, TextureView.SurfaceTextureListener,
@@ -66,19 +60,19 @@ public class MainActivity extends Activity
 
   @Override public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
     surefaceTextureReady = true;
-    try {
-      Surface surface = new Surface(surfaceTexture);
-      File file = new File(Environment.getExternalStorageDirectory(), "example.mp4");
-      Log.d("FILE", file.getAbsolutePath());
-      MoviePlayer player = null;
-      SpeedControlCallback callback = new SpeedControlCallback();
-      player = new MoviePlayer(file, surface, callback);
-      playTask = new MoviePlayer.PlayTask(player, this);
-      playTask.setLoopMode(true);
-      playTask.execute();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    //try {
+    //  Surface surface = new Surface(surfaceTexture);
+    //  File file = new File(Environment.getExternalStorageDirectory(), "example.mp4");
+    //  Log.d("FILE", file.getAbsolutePath());
+    //  MoviePlayer player = null;
+    //  SpeedControlCallback callback = new SpeedControlCallback();
+    //  player = new MoviePlayer(file, surface, callback);
+    //  playTask = new MoviePlayer.PlayTask(player, this);
+    //  playTask.setLoopMode(true);
+    //  playTask.execute();
+    //} catch (IOException e) {
+    //  e.printStackTrace();
+    //}
   }
 
   @Override public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {}

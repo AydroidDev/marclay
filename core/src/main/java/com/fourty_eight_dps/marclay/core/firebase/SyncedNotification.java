@@ -11,14 +11,16 @@ import static com.fourty_eight_dps.marclay.core.util.StringUtil.nullToEmpty;
 
 public class SyncedNotification implements Comparable<SyncedNotification> {
 
-  private final String key;
-  private final String message;
-  private final String icon;
+  private String key;
+  private String message;
+  private String icon;
 
-  public SyncedNotification(String key, String message, Bitmap icon) {
+  public SyncedNotification() {}
+
+  public SyncedNotification(String key, String message, String icon) {
     this.key = key.replace('.', '_');
     this.message = message;
-    this.icon = BitmapUtil.encodeToString(icon);
+    this.icon = icon;
   }
 
   public String getKey() {
@@ -35,12 +37,14 @@ public class SyncedNotification implements Comparable<SyncedNotification> {
 
   public static SyncedNotification create(Context context, StatusBarNotification sbn) {
     Bitmap image = NotificationUtil.getLargestImage(context, sbn);
-    return new SyncedNotification(sbn.getKey(), nullToEmpty(sbn.getNotification().tickerText),
-        image);
+    return new SyncedNotification(
+        sbn.getKey(),
+        nullToEmpty(sbn.getNotification().tickerText),
+        BitmapUtil.encodeToString(image));
   }
 
   public static SyncedNotification create(DataSnapshot snapshot) {
-    return new SyncedNotification(snapshot.getKey(), snapshot.getValue().toString(), null);
+    return snapshot.getValue(SyncedNotification.class);
   }
 
   @Override public String toString() {

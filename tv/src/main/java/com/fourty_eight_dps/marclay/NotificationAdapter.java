@@ -1,12 +1,15 @@
 package com.fourty_eight_dps.marclay;
 
+import android.graphics.Bitmap;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
+import com.fourty_eight_dps.marclay.core.util.BitmapUtil;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
@@ -58,7 +61,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
     SyncedNotification notification = notifications.get(position);
+    Bitmap bitmap = BitmapUtil.decodeToBitmap(notification.getIcon());
+
     holder.message.setText(notification.getMessage());
+    holder.icon.setImageBitmap(bitmap);
   }
 
   @Override public int getItemCount() {
@@ -74,11 +80,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
+    ImageView icon;
     TextView message;
 
     public ViewHolder(View itemView) {
       super(itemView);
       message = (TextView) itemView.findViewById(R.id.message);
+      icon = (ImageView) itemView.findViewById(R.id.icon);
     }
   }
 }
