@@ -51,7 +51,7 @@ public class RemoteNotificationManager {
 
   public void postNotification(SyncedNotification syncedNotification) {
     firebase.child(syncedNotification.getKey())
-        .setValue(syncedNotification.getMessage());
+        .setValue(syncedNotification);
   }
 
   public void removeNotification(SyncedNotification syncedNotification) {

@@ -1,4 +1,4 @@
-package com.fourty_eight_dps.marclay.util;
+package com.fourty_eight_dps.marclay.core.util;
 
 import android.app.Notification;
 import android.content.Context;
