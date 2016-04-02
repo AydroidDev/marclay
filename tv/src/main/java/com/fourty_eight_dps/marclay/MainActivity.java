@@ -45,6 +45,14 @@ public class MainActivity extends Activity
     remoteNotificationManager.registerNotificationListener(this);
   }
 
+  @Override protected void onPause() {
+    super.onPause();
+    if (playTask != null) {
+      stopPlayback();
+      playTask.waitForStop();
+    }
+  }
+
   @Override protected void onStop() {
     super.onStop();
     remoteNotificationManager.unregisterNotificationListener();
@@ -73,6 +81,12 @@ public class MainActivity extends Activity
     //} catch (IOException e) {
     //  e.printStackTrace();
     //}
+  }
+
+  public void stopPlayback() {
+    if (playTask != null) {
+      playTask.requestStop();
+    }
   }
 
   @Override public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {}
