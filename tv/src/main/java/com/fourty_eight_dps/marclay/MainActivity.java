@@ -1,16 +1,18 @@
 package com.fourty_eight_dps.marclay;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.TextureView;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
+import com.fourty_eight_dps.marclay.media.MediaDispatcher;
 import com.fourty_eight_dps.marclay.playback.MoviePlayer;
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
     implements RemoteNotificationManager.NotificationListener, TextureView.SurfaceTextureListener,
     MoviePlayer.PlayerFeedback {
 
@@ -21,11 +23,17 @@ public class MainActivity extends Activity
   RecyclerView recyclerView;
   NotificationAdapter notificationAdapter;
 
+  MediaDispatcher mediaDispatcher;
+
   private boolean surefaceTextureReady = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    mediaDispatcher = new MediaDispatcher(this);
+    mediaDispatcher.onCreate();
+
     remoteNotificationManager = new RemoteNotificationManager();
     setContentView(R.layout.activity_main);
 
@@ -42,6 +50,7 @@ public class MainActivity extends Activity
 
   @Override protected void onStart() {
     super.onStart();
+    mediaDispatcher.onStart();
     remoteNotificationManager.registerNotificationListener(this);
   }
 
@@ -51,6 +60,11 @@ public class MainActivity extends Activity
       stopPlayback();
       playTask.waitForStop();
     }
+  }
+
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    mediaDispatcher.onActivityResult(requestCode, resultCode, data);
   }
 
   @Override protected void onStop() {
