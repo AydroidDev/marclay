@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.fourty_eight_dps.marclay.video;
+package com.fourty_eight_dps.marclay.playback;
 
 import android.media.MediaCodec;
 import android.media.MediaExtractor;

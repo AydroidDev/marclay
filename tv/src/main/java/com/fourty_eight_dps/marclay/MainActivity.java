@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.TextureView;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
-import com.fourty_eight_dps.marclay.video.MoviePlayer;
+import com.fourty_eight_dps.marclay.playback.MoviePlayer;
 
 public class MainActivity extends Activity
     implements RemoteNotificationManager.NotificationListener, TextureView.SurfaceTextureListener,
