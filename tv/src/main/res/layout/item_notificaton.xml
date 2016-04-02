@@ -10,8 +10,8 @@
     >
   <de.hdodenhof.circleimageview.CircleImageView
       android:id="@+id/icon"
-      android:layout_width="60dp"
-      android:layout_height="60dp"
+      android:layout_width="45dp"
+      android:layout_height="45dp"
       app:civ_fill_color="@color/primary"
       tools:src="@mipmap/ic_launcher"
       />
