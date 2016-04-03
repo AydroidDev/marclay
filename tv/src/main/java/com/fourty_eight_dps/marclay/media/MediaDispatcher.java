@@ -53,7 +53,7 @@ public class MediaDispatcher implements ChildEventListener {
             String uriLocation = cursor.getString(uriIndex);
             String fileName = cursor.getString(fileNameIndex);
             sharedPreferences.edit()
-                .putString(fileName, uriLocation)
+                .putString(uriLocation, fileName)
                 .apply();
           }
         }

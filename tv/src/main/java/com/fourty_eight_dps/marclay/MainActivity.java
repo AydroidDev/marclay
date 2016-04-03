@@ -1,15 +1,24 @@
 package com.fourty_eight_dps.marclay;
 
+import android.content.SharedPreferences;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Surface;
 import android.view.TextureView;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 import com.fourty_eight_dps.marclay.media.MediaDispatcher;
 import com.fourty_eight_dps.marclay.playback.MoviePlayer;
+import com.fourty_eight_dps.marclay.playback.SpeedControlCallback;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements RemoteNotificationManager.NotificationListener, TextureView.SurfaceTextureListener,
@@ -23,12 +32,14 @@ public class MainActivity extends AppCompatActivity
   NotificationAdapter notificationAdapter;
 
   MediaDispatcher mediaDispatcher;
+  SharedPreferences sharedPreferences;
 
   private boolean surefaceTextureReady = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     mediaDispatcher = new MediaDispatcher(this);
     mediaDispatcher.onCreate();
@@ -75,19 +86,22 @@ public class MainActivity extends AppCompatActivity
 
   @Override public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
     surefaceTextureReady = true;
-    //try {
-    //  Surface surface = new Surface(surfaceTexture);
-    //  File file = new File(Environment.getExternalStorageDirectory(), "example.mp4");
-    //  Log.d("FILE", file.getAbsolutePath());
-    //  MoviePlayer player = null;
-    //  SpeedControlCallback callback = new SpeedControlCallback();
-    //  player = new MoviePlayer(file, surface, callback);
-    //  playTask = new MoviePlayer.PlayTask(player, this);
-    //  playTask.setLoopMode(true);
-    //  playTask.execute();
-    //} catch (IOException e) {
-    //  e.printStackTrace();
-    //}
+    List<Object> files = new ArrayList<>(sharedPreferences.getAll().values());
+    if (!files.isEmpty()) {
+      try {
+        Surface surface = new Surface(surfaceTexture);
+        File file = new File(files.get(0).toString());
+        Log.d("FILE", file.getAbsolutePath());
+        MoviePlayer player = null;
+        SpeedControlCallback callback = new SpeedControlCallback();
+        player = new MoviePlayer(file, surface, callback);
+        playTask = new MoviePlayer.PlayTask(player, this);
+        playTask.setLoopMode(true);
+        playTask.execute();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   public void stopPlayback() {
