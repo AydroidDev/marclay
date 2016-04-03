@@ -1,6 +1,5 @@
 package com.fourty_eight_dps.marclay;
 
-import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity
 
   @Override protected void onStart() {
     super.onStart();
-    mediaDispatcher.onStart();
     remoteNotificationManager.registerNotificationListener(this);
   }
 
@@ -60,11 +58,6 @@ public class MainActivity extends AppCompatActivity
       stopPlayback();
       playTask.waitForStop();
     }
-  }
-
-  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    mediaDispatcher.onActivityResult(requestCode, resultCode, data);
   }
 
   @Override protected void onStop() {

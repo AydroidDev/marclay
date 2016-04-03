@@ -9,15 +9,6 @@ import java.lang.ref.WeakReference;
 
 public class RemoteNotificationManager {
 
-  public interface NotificationListener {
-    void onNotificationPosted(SyncedNotification syncedNotification);
-
-    void onNotificationRemoved(SyncedNotification syncedNotification);
-  }
-
-  private static final String CHILD_NOTIFICATIONS = "notifications";
-  private static final String FIREBASE_APP_URL = "https://marclay.firebaseio.com";
-
   private final Firebase firebase;
   private WeakReference<NotificationListener> notificationListenerWeakReference;
   private final ChildEventListener notificationListener = new ChildEventListener() {
@@ -43,10 +34,13 @@ public class RemoteNotificationManager {
 
     @Override public void onCancelled(FirebaseError firebaseError) {}
   };
-
   public RemoteNotificationManager() {
-    this.firebase = new Firebase(FIREBASE_APP_URL).child(CHILD_NOTIFICATIONS);
+    this.firebase = FirebaseRefs.notifications();
     this.firebase.addChildEventListener(notificationListener);
+  }
+
+  public static void setAndroidContext(Context context) {
+    Firebase.setAndroidContext(context);
   }
 
   public void postNotification(SyncedNotification syncedNotification) {
@@ -68,7 +62,9 @@ public class RemoteNotificationManager {
     notificationListenerWeakReference = null;
   }
 
-  public static void setAndroidContext(Context context) {
-    Firebase.setAndroidContext(context);
+  public interface NotificationListener {
+    void onNotificationPosted(SyncedNotification syncedNotification);
+
+    void onNotificationRemoved(SyncedNotification syncedNotification);
   }
 }
