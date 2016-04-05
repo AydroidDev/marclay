@@ -2,11 +2,14 @@ package com.fourty_eight_dps.marclay;
 
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 import com.fourty_eight_dps.marclay.media.MediaDispatcher;
@@ -19,6 +22,8 @@ public class MainActivity extends AppCompatActivity
     implements RemoteNotificationManager.NotificationListener, TextureView.SurfaceTextureListener,
     MoviePlayer.PlayerFeedback {
 
+  public static final int DELAY_TEN_SECONDS = 10000;
+
   MoviePlayer.PlayTask playTask;
   RemoteNotificationManager remoteNotificationManager;
 
@@ -29,17 +34,23 @@ public class MainActivity extends AppCompatActivity
   MediaDispatcher mediaDispatcher;
   Surface surface;
 
+  View progress;
+  Handler handler;
+
   private boolean surefaceTextureReady = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    handler = new Handler(Looper.getMainLooper());
     mediaDispatcher = new MediaDispatcher(this);
     mediaDispatcher.onCreate();
 
     remoteNotificationManager = new RemoteNotificationManager();
     setContentView(R.layout.activity_main);
+
+    progress = findViewById(android.R.id.progress);
 
     textureView = (TextureView) findViewById(R.id.texture);
     textureView.setSurfaceTextureListener(this);
@@ -88,6 +99,7 @@ public class MainActivity extends AppCompatActivity
     File nextVideo = mediaDispatcher.nextVideo();
     if (nextVideo != null) {
       try {
+        progress.setVisibility(View.GONE);
         MoviePlayer player = null;
         SpeedControlCallback callback = new SpeedControlCallback();
         player = new MoviePlayer(nextVideo, surface, callback);
@@ -96,6 +108,13 @@ public class MainActivity extends AppCompatActivity
       } catch (IOException e) {
         e.printStackTrace();
       }
+    } else {
+      // Schedule a delayed attempt to play
+      handler.postDelayed(new Runnable() {
+        @Override public void run() {
+          enqueueNext();
+        }
+      }, DELAY_TEN_SECONDS);
     }
   }
 

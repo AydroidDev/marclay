@@ -40,7 +40,7 @@ public class MediaDispatcher implements ChildEventListener {
   public MediaDispatcher(Context context) {
     this.context = context;
     this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    this.cycleIterator = Iterators.cycle(sharedPreferences.getAll().values());
+    updateCycleIterator();
     downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 
     IntentFilter downloadCompleteFilter =
@@ -65,10 +65,15 @@ public class MediaDispatcher implements ChildEventListener {
             sharedPreferences.edit()
                 .putString(uriLocation, fileName)
                 .apply();
+            updateCycleIterator();
           }
         }
       }
     }, downloadCompleteFilter);
+  }
+
+  private void updateCycleIterator() {
+    this.cycleIterator = Iterators.cycle(sharedPreferences.getAll().values());
   }
 
   public void onCreate() {
