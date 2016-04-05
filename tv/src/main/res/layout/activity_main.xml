@@ -16,6 +16,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_margin="50dp"
+      android:visibility="gone"
       card_view:cardCornerRadius="4dp"
       >
     <LinearLayout
