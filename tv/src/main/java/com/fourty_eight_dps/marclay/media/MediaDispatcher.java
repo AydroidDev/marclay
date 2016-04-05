@@ -14,8 +14,9 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.fourty_eight_dps.marclay.core.firebase.FirebaseRefs;
-import java.util.HashSet;
-import java.util.Set;
+import com.fourty_eight_dps.marclay.core.firebase.Video;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Handles Pinning and Sync folder contents from Google Drive
@@ -26,7 +27,11 @@ public class MediaDispatcher implements ChildEventListener {
   private DownloadManager downloadManager;
   private SharedPreferences sharedPreferences;
   private Context context;
-  private Set<Long> downloadIds = new HashSet<>();
+
+  /**
+   * Maps an Android ID to a Video ID
+   */
+  private Map<Long, String> keyToDownloadIdMap = new HashMap<>();
 
   public MediaDispatcher(Context context) {
     this.context = context;
@@ -38,8 +43,8 @@ public class MediaDispatcher implements ChildEventListener {
     context.registerReceiver(new BroadcastReceiver() {
       @Override public void onReceive(Context context, Intent intent) {
         long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-        if (downloadIds.contains(downloadId)) {
-          downloadIds.remove(downloadId);
+        if (keyToDownloadIdMap.containsKey(downloadId)) {
+          keyToDownloadIdMap.remove(downloadId);
           DownloadManager.Query query = new DownloadManager.Query();
           query.setFilterById(downloadId);
           Cursor cursor = downloadManager.query(query);
@@ -68,12 +73,14 @@ public class MediaDispatcher implements ChildEventListener {
 
   @Override public void onChildAdded(DataSnapshot dataSnapshot, String s) {
     // Start Video download
-    Uri downloadUrl = Uri.parse(dataSnapshot.getValue().toString());
-    DownloadManager.Request request = new DownloadManager.Request(downloadUrl);
+    Video video = dataSnapshot.getValue(Video.class);
+    String key = dataSnapshot.getKey();
+    
+    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(video.getUrl()));
     request.setVisibleInDownloadsUi(true);
     request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
     request.setDestinationInExternalFilesDir(context, null, dataSnapshot.getKey());
-    downloadIds.add(downloadManager.enqueue(request));
+    keyToDownloadIdMap.put(downloadManager.enqueue(request), key);
   }
 
   @Override public void onChildChanged(DataSnapshot dataSnapshot, String s) {
