@@ -15,7 +15,10 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.fourty_eight_dps.marclay.core.firebase.FirebaseRefs;
 import com.fourty_eight_dps.marclay.core.firebase.Video;
+import com.google.common.collect.Iterators;
+import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -26,6 +29,7 @@ public class MediaDispatcher implements ChildEventListener {
   private Firebase videos;
   private DownloadManager downloadManager;
   private SharedPreferences sharedPreferences;
+  private Iterator<?> cycleIterator;
   private Context context;
 
   /**
@@ -36,6 +40,7 @@ public class MediaDispatcher implements ChildEventListener {
   public MediaDispatcher(Context context) {
     this.context = context;
     this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    this.cycleIterator = Iterators.cycle(sharedPreferences.getAll().values());
     downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 
     IntentFilter downloadCompleteFilter =
@@ -71,11 +76,18 @@ public class MediaDispatcher implements ChildEventListener {
     videos.addChildEventListener(this);
   }
 
+  public File nextVideo() {
+    if (!cycleIterator.hasNext()) {
+      return null;
+    }
+    return new File(cycleIterator.next().toString());
+  }
+
   @Override public void onChildAdded(DataSnapshot dataSnapshot, String s) {
     // Start Video download
     Video video = dataSnapshot.getValue(Video.class);
     String key = dataSnapshot.getKey();
-    
+
     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(video.getUrl()));
     request.setVisibleInDownloadsUi(true);
     request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
