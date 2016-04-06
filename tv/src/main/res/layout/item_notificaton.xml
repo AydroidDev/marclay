@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
     android:orientation="horizontal"
     android:padding="16dp"
     >
@@ -21,7 +20,6 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
       android:paddingLeft="16dp"
-      android:textColor="@color/subtext_color"
       android:textSize="20sp"
       tools:text="Oliver just got back to me about the Marin project."
       />

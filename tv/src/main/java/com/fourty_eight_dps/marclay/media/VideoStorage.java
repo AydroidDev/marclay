@@ -17,6 +17,7 @@ public class VideoStorage {
 
   public VideoStorage(Context context) {
     this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    updateCycleIterator();
   }
 
   public boolean hasVideo(String videoId) {
