@@ -1,6 +1,9 @@
 package com.fourty_eight_dps.marclay;
 
 import android.graphics.SurfaceTexture;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 import com.fourty_eight_dps.marclay.media.MediaDispatcher;
@@ -17,6 +21,7 @@ import com.fourty_eight_dps.marclay.playback.MoviePlayer;
 import com.fourty_eight_dps.marclay.playback.SpeedControlCallback;
 import java.io.File;
 import java.io.IOException;
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 public class MainActivity extends AppCompatActivity
     implements RemoteNotificationManager.NotificationListener, TextureView.SurfaceTextureListener,
@@ -57,6 +62,8 @@ public class MainActivity extends AppCompatActivity
 
     notificationAdapter = new NotificationAdapter();
     recyclerView = (RecyclerView) findViewById(android.R.id.list);
+    recyclerView.setItemAnimator(new SlideInLeftAnimator(new OvershootInterpolator(.8f)));
+    recyclerView.getItemAnimator().setAddDuration(600);
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
     linearLayoutManager.setAutoMeasureEnabled(true);
     recyclerView.setLayoutManager(linearLayoutManager);
@@ -83,6 +90,17 @@ public class MainActivity extends AppCompatActivity
 
   @Override public void onNotificationPosted(SyncedNotification syncedNotification) {
     notificationAdapter.add(syncedNotification);
+    handler.postDelayed(new Runnable() {
+      @Override public void run() {
+        playNotificationSound();
+      }
+    }, 200);
+  }
+
+  private void playNotificationSound() {
+    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+    r.play();
   }
 
   @Override public void onNotificationRemoved(SyncedNotification syncedNotification) {

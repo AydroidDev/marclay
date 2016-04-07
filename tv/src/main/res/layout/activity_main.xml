@@ -11,40 +11,35 @@
       android:layout_height="match_parent"
       />
 
-  <FrameLayout
+  <LinearLayout
       android:id="@+id/notification_panel"
       android:layout_width="300dp"
       android:layout_height="match_parent"
-      android:background="@drawable/shape_notification_background"
+      android:layout_marginBottom="20dp"
+      android:layout_marginLeft="20dp"
+      android:layout_marginTop="20dp"
+      android:orientation="vertical"
       >
-    <LinearLayout
+    <TextClock
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginBottom="16dp"
+        android:textSize="30sp"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical"
-        >
-      <TextClock
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="right"
-          android:textSize="30sp"
-          />
-      <android.support.v7.widget.RecyclerView
-          android:id="@android:id/list"
-          android:layout_width="match_parent"
-          android:layout_height="0dp"
-          android:layout_weight="1"
-          />
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="right"
-          android:text="Location"
-          />
-    </LinearLayout>
-  </FrameLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Location"
+        />
+  </LinearLayout>
 
   <include
       android:id="@android:id/progress"

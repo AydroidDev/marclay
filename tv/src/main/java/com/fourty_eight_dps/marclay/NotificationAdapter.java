@@ -61,10 +61,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
     SyncedNotification notification = notifications.get(position);
-    Bitmap bitmap = BitmapUtil.decodeToBitmap(notification.getIcon());
-
+    Bitmap bitmap = BitmapUtil.decodeToBitmap(notification.getApplicationIcon());
     holder.message.setText(notification.getMessage());
     holder.icon.setImageBitmap(bitmap);
+    holder.applicationName.setText(notification.getApplicationName());
   }
 
   @Override public int getItemCount() {
@@ -82,11 +82,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
   public static class ViewHolder extends RecyclerView.ViewHolder {
     ImageView icon;
     TextView message;
+    TextView applicationName;
 
     public ViewHolder(View itemView) {
       super(itemView);
       message = (TextView) itemView.findViewById(R.id.message);
       icon = (ImageView) itemView.findViewById(R.id.icon);
+      applicationName = (TextView) itemView.findViewById(R.id.application_name);
     }
   }
 }

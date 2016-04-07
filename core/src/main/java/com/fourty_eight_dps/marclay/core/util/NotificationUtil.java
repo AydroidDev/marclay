@@ -2,10 +2,13 @@ package com.fourty_eight_dps.marclay.core.util;
 
 import android.app.Notification;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.service.notification.StatusBarNotification;
 
 public final class NotificationUtil {
@@ -27,11 +30,33 @@ public final class NotificationUtil {
     if (largeIcon != null) {
       return largeIcon;
     } else {
-      return getApplicationIcon(context, sbn);
+      return getNotificationIcon(context, sbn);
     }
   }
 
-  private static Bitmap getApplicationIcon(Context context, StatusBarNotification sbn) {
+  public static Bitmap getLauncherIcon(Context context, StatusBarNotification sbn) {
+    try {
+      String packageName = sbn.getPackageName();
+      PackageManager packageManager = context.getPackageManager();
+      Drawable iconDrawable = packageManager.getApplicationIcon(packageName);
+      if (iconDrawable instanceof BitmapDrawable) {
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) iconDrawable;
+        return bitmapDrawable.getBitmap();
+      }
+    } catch (Exception ignored) {}
+    return null;
+  }
+
+  public static String getAppplicationName(Context context, StatusBarNotification sbn) {
+    try {
+      PackageManager packageManager = context.getPackageManager();
+      ApplicationInfo applicationInfo = packageManager.getApplicationInfo(sbn.getPackageName(), 0);
+      return packageManager.getApplicationLabel(applicationInfo).toString();
+    } catch (PackageManager.NameNotFoundException ignored) {}
+    return "";
+  }
+
+  private static Bitmap getNotificationIcon(Context context, StatusBarNotification sbn) {
     Resources resources;
     try {
       resources = context.getPackageManager().getResourcesForApplication(sbn.getPackageName());
