@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary"
+    android:background="@android:color/white"
     >
   <LinearLayout
       android:layout_width="wrap_content"
@@ -10,20 +10,16 @@
       android:layout_gravity="center"
       android:orientation="vertical"
       >
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:paddingBottom="50dp"
-        android:text="@string/title_loading"
-        android:textSize="24sp"
+        android:src="@drawable/logo"
         />
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
         android:indeterminate="true"
         />
   </LinearLayout>
