@@ -11,9 +11,10 @@
     tools:context="com.fourty_eight_dps.marclay.MainActivity"
     >
 
-  <TextView
-      android:layout_width="wrap_content"
+  <Switch
+      android:id="@+id/switch_notification"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Hello World!"
+      android:text="@string/title_notification_mirroring"
       />
 </RelativeLayout>

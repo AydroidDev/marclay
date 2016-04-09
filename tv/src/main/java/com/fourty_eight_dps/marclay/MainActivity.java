@@ -15,6 +15,8 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 import com.fourty_eight_dps.marclay.media.MediaDispatcher;
@@ -41,14 +43,20 @@ public class MainActivity extends AppCompatActivity
   MoviePlayer.PlayTask playTask;
   RemoteNotificationManager remoteNotificationManager;
 
+  @Bind(R.id.texture)
   TextureView textureView;
+
+  @Bind(android.R.id.list)
   RecyclerView recyclerView;
   NotificationAdapter notificationAdapter;
 
   MediaDispatcher mediaDispatcher;
   Surface surface;
 
+  @Bind(android.R.id.progress)
   View progress;
+
+  @Bind(R.id.weather)
   TextView weather;
   Handler handler;
 
@@ -83,14 +91,11 @@ public class MainActivity extends AppCompatActivity
 
     remoteNotificationManager = new RemoteNotificationManager();
     setContentView(R.layout.activity_main);
+    ButterKnife.bind(this);
 
-    progress = findViewById(android.R.id.progress);
-    textureView = (TextureView) findViewById(R.id.texture);
-    weather = (TextView) findViewById(R.id.weather);
     textureView.setSurfaceTextureListener(this);
 
     notificationAdapter = new NotificationAdapter();
-    recyclerView = (RecyclerView) findViewById(android.R.id.list);
     recyclerView.setItemAnimator(new SlideInLeftAnimator(new OvershootInterpolator(.8f)));
     recyclerView.getItemAnimator().setAddDuration(600);
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

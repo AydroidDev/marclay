@@ -25,4 +25,6 @@ dependencies {
 
   // Used to Sync Notification
   compile 'com.firebase:firebase-client-android:2.5.2'
+
+  compile 'com.jakewharton:butterknife:7.0.1'
 }
