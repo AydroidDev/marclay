@@ -19,6 +19,7 @@ android {
     }
     debug {
       signingConfig signingConfigs.debug
+      buildConfigField 'String', 'OPEN_WEATHER_API_KEY', "${open_weather_api_key}"
     }
   }
   signingConfigs {
