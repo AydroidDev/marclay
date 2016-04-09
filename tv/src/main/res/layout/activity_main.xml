@@ -15,6 +15,8 @@
       android:layout_height="wrap_content"
       android:layout_gravity="right"
       android:layout_margin="40dp"
+      android:alpha=".7"
+      android:fontFamily="sans-serif-light"
       android:textSize="30sp"
       />
   <TextView
@@ -22,17 +24,25 @@
       android:layout_height="wrap_content"
       android:layout_gravity="bottom|right"
       android:layout_margin="40dp"
+      android:alpha=".7"
       android:text="Location"
       />
-  <android.support.v7.widget.RecyclerView
-      android:id="@android:id/list"
+
+  <LinearLayout
       android:layout_width="300dp"
       android:layout_height="match_parent"
-      android:layout_marginBottom="20dp"
-      android:layout_marginLeft="20dp"
-      android:layout_marginTop="40dp"
-      tools:listitem="@layout/item_notificaton"
-      />
+      android:background="@drawable/shape_notification_background"
+      >
+    <android.support.v7.widget.RecyclerView
+        android:id="@android:id/list"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        tools:listitem="@layout/item_notificaton"
+        />
+
+  </LinearLayout>
 
   <include
       android:id="@android:id/progress"
