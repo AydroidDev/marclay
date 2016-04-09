@@ -14,20 +14,29 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
+import android.widget.TextView;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
 import com.fourty_eight_dps.marclay.media.MediaDispatcher;
 import com.fourty_eight_dps.marclay.playback.MoviePlayer;
 import com.fourty_eight_dps.marclay.playback.SpeedControlCallback;
+import com.fourty_eight_dps.marclay.weather.OpenWeather;
+import com.fourty_eight_dps.marclay.weather.model.Response;
 import java.io.File;
 import java.io.IOException;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
+import retrofit2.Call;
+import retrofit2.Callback;
+
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class MainActivity extends AppCompatActivity
     implements RemoteNotificationManager.NotificationListener, TextureView.SurfaceTextureListener,
     MoviePlayer.PlayerFeedback {
 
-  public static final int DELAY_TEN_SECONDS = 10000;
+  public static final long DELAY_TEN_SECONDS = SECONDS.toMillis(10);
+  public static final long DELAY_ONE_MINUTE = MINUTES.toMillis(1);
 
   MoviePlayer.PlayTask playTask;
   RemoteNotificationManager remoteNotificationManager;
@@ -40,9 +49,29 @@ public class MainActivity extends AppCompatActivity
   Surface surface;
 
   View progress;
+  TextView weather;
   Handler handler;
 
   private boolean surefaceTextureReady = false;
+
+  private Runnable updateWeather = new Runnable() {
+    @Override public void run() {
+      OpenWeather.getWeather(new Callback<Response.Weather>() {
+        @Override public void onResponse(Call<Response.Weather> call,
+            retrofit2.Response<Response.Weather> response) {
+          if (response.isSuccessful()) {
+            Response.Weather currentWeather = response.body();
+            weather.setText(
+                String.format(getString(R.string.title_weather_format),
+                    Math.round(currentWeather.main.temp)));
+          }
+        }
+
+        @Override public void onFailure(Call<Response.Weather> call, Throwable t) {}
+      });
+      handler.postDelayed(this, DELAY_ONE_MINUTE);
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +85,8 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
 
     progress = findViewById(android.R.id.progress);
-
     textureView = (TextureView) findViewById(R.id.texture);
+    weather = (TextView) findViewById(R.id.weather);
     textureView.setSurfaceTextureListener(this);
 
     notificationAdapter = new NotificationAdapter();
@@ -73,6 +102,7 @@ public class MainActivity extends AppCompatActivity
   @Override protected void onStart() {
     super.onStart();
     remoteNotificationManager.registerNotificationListener(this);
+    handler.post(updateWeather);
   }
 
   @Override protected void onPause() {
@@ -86,6 +116,7 @@ public class MainActivity extends AppCompatActivity
   @Override protected void onStop() {
     super.onStop();
     remoteNotificationManager.unregisterNotificationListener();
+    handler.removeCallbacks(updateWeather);
   }
 
   @Override public void onNotificationPosted(SyncedNotification syncedNotification) {

@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName;
 public class Response {
 
   public static class Weather {
-    Info main;
+    public Info main;
   }
 
   public static class Info {
-    String temp;
+    public float temp;
 
     @SerializedName("temp_min")
-    String minTemp;
+    public String minTemp;
 
     @SerializedName("temp_max")
-    String maxTemp;
+    public String maxTemp;
   }
 }
