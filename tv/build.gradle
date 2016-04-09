@@ -43,5 +43,7 @@ dependencies {
   compile 'de.hdodenhof:circleimageview:2.0.0'
   compile 'jp.wasabeef:recyclerview-animators:2.2.1'
 
+  compile 'com.squareup.retrofit2:retrofit:2.0.1'
+  compile 'com.squareup.retrofit2:converter-gson:2.0.1'
   compile 'com.google.guava:guava:19.0'
 }
