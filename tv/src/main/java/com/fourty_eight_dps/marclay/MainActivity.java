@@ -143,6 +143,10 @@ public class MainActivity extends AppCompatActivity
     notificationAdapter.remove(syncedNotification);
   }
 
+  @Override public void onNotificationUpdate(SyncedNotification syncedNotification) {
+    notificationAdapter.update(syncedNotification);
+  }
+
   @Override public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
     surefaceTextureReady = true;
     surface = new Surface(surfaceTexture);

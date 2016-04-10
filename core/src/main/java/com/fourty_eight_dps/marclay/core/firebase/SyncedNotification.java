@@ -76,6 +76,6 @@ public class SyncedNotification implements Comparable<SyncedNotification> {
   }
 
   @Override public int compareTo(SyncedNotification syncedNotification) {
-    return message.compareTo(syncedNotification.getMessage());
+    return key.compareTo(syncedNotification.getKey());
   }
 }

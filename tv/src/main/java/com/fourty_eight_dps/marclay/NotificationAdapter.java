@@ -42,7 +42,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
           @Override
           public boolean areContentsTheSame(SyncedNotification oldItem,
               SyncedNotification newItem) {
-            return oldItem.getKey().equals(newItem.getKey());
+            return oldItem.getMessage().equals(newItem.getMessage());
           }
 
           @Override
@@ -77,6 +77,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
   public void remove(SyncedNotification notification) {
     notifications.remove(notification);
+  }
+
+  public void update(SyncedNotification notification) {
+    int index = notifications.indexOf(notification);
+    if (index != SortedList.INVALID_POSITION) {
+      notifications.updateItemAt(index, notification);
+    }
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

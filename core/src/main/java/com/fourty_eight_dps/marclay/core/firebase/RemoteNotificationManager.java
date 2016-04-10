@@ -28,12 +28,19 @@ public class RemoteNotificationManager {
       }
     }
 
-    @Override public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+    @Override public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+      if (notificationListenerWeakReference != null) {
+        notificationListenerWeakReference
+            .get()
+            .onNotificationUpdate(SyncedNotification.create(dataSnapshot));
+      }
+    }
 
     @Override public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
 
     @Override public void onCancelled(FirebaseError firebaseError) {}
   };
+
   public RemoteNotificationManager() {
     this.firebase = FirebaseRefs.notifications();
     this.firebase.addChildEventListener(notificationListener);
@@ -66,5 +73,7 @@ public class RemoteNotificationManager {
     void onNotificationPosted(SyncedNotification syncedNotification);
 
     void onNotificationRemoved(SyncedNotification syncedNotification);
+
+    void onNotificationUpdate(SyncedNotification syncedNotification);
   }
 }
