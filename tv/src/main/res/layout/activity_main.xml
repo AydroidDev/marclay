@@ -43,11 +43,17 @@
         />
   </LinearLayout>
 
-  <LinearLayout
-      android:layout_width="300dp"
-      android:layout_height="match_parent"
-      android:background="@drawable/shape_notification_background"
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="300dp"
       >
+    <View
+        android:id="@+id/gradient"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@drawable/shape_notification_background"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@android:id/list"
         android:layout_width="300dp"
@@ -56,14 +62,14 @@
         android:layout_marginTop="40dp"
         tools:listitem="@layout/item_notificaton"
         />
-
-  </LinearLayout>
+  </FrameLayout>
 
   <View
       android:id="@+id/mask"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@android:color/white"
+      tools:visiblility="gone"
       />
 
   <LinearLayout
@@ -72,6 +78,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center"
       android:orientation="vertical"
+      tools:visiblility="gone"
       >
     <ImageView
         android:layout_width="wrap_content"

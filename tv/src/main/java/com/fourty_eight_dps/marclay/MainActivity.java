@@ -51,8 +51,9 @@ public class MainActivity extends AppCompatActivity
 
   @Bind(R.id.texture) TextureView textureView;
   @Bind(android.R.id.list) RecyclerView recyclerView;
-  @Bind(android.R.id.progress) View progress;
   @Bind(R.id.weather) TextView weather;
+  @Bind(android.R.id.progress) View progress;
+  @Bind(R.id.gradient) View gradient;
   @Bind(R.id.mask) View mask;
 
   Handler handler;
@@ -124,6 +125,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override public void onNotificationPosted(SyncedNotification syncedNotification) {
     notificationAdapter.add(syncedNotification);
+    updateGradient();
     handler.postDelayed(new Runnable() {
       @Override public void run() {
         playNotificationSound();
@@ -139,6 +141,19 @@ public class MainActivity extends AppCompatActivity
 
   @Override public void onNotificationRemoved(SyncedNotification syncedNotification) {
     notificationAdapter.remove(syncedNotification);
+    updateGradient();
+  }
+
+  private void updateGradient() {
+    final int listItems = notificationAdapter == null ? 0 : notificationAdapter.getItemCount();
+    handler.post(new Runnable() {
+      @Override public void run() {
+        gradient.animate()
+            .setDuration(600)
+            .alpha(listItems > 0 ? 1 : 0)
+            .start();
+      }
+    });
   }
 
   @Override public void onNotificationUpdate(SyncedNotification syncedNotification) {
