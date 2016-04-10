@@ -1,5 +1,7 @@
 package com.fourty_eight_dps.marclay;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.graphics.SurfaceTexture;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -13,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -42,22 +45,16 @@ public class MainActivity extends AppCompatActivity
 
   MoviePlayer.PlayTask playTask;
   RemoteNotificationManager remoteNotificationManager;
-
-  @Bind(R.id.texture)
-  TextureView textureView;
-
-  @Bind(android.R.id.list)
-  RecyclerView recyclerView;
   NotificationAdapter notificationAdapter;
-
   MediaDispatcher mediaDispatcher;
   Surface surface;
 
-  @Bind(android.R.id.progress)
-  View progress;
+  @Bind(R.id.texture) TextureView textureView;
+  @Bind(android.R.id.list) RecyclerView recyclerView;
+  @Bind(android.R.id.progress) View progress;
+  @Bind(R.id.weather) TextView weather;
+  @Bind(R.id.mask) View mask;
 
-  @Bind(R.id.weather)
-  TextView weather;
   Handler handler;
 
   private boolean surefaceTextureReady = false;
@@ -87,7 +84,6 @@ public class MainActivity extends AppCompatActivity
 
     handler = new Handler(Looper.getMainLooper());
     mediaDispatcher = new MediaDispatcher(this);
-    mediaDispatcher.onCreate();
 
     remoteNotificationManager = new RemoteNotificationManager();
     setContentView(R.layout.activity_main);
@@ -106,6 +102,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override protected void onStart() {
     super.onStart();
+    mediaDispatcher.onStart();
     remoteNotificationManager.registerNotificationListener(this);
     handler.post(updateWeather);
   }
@@ -120,6 +117,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override protected void onStop() {
     super.onStop();
+    mediaDispatcher.onStop();
     remoteNotificationManager.unregisterNotificationListener();
     handler.removeCallbacks(updateWeather);
   }
@@ -157,7 +155,7 @@ public class MainActivity extends AppCompatActivity
     File nextVideo = mediaDispatcher.nextVideo();
     if (nextVideo != null) {
       try {
-        progress.setVisibility(View.GONE);
+        endProgressLoading();
         MoviePlayer player = null;
         SpeedControlCallback callback = new SpeedControlCallback();
         player = new MoviePlayer(nextVideo, surface, callback);
@@ -174,6 +172,47 @@ public class MainActivity extends AppCompatActivity
         }
       }, DELAY_TEN_SECONDS);
     }
+  }
+
+  private void endProgressLoading() {
+    if (progress.getVisibility() == View.GONE) {return;}
+
+    progress.animate()
+        .alpha(0)
+        .setStartDelay(2000)
+        .setDuration(700)
+        .setListener(new Animator.AnimatorListener() {
+          @Override public void onAnimationStart(Animator animator) {}
+
+          @Override public void onAnimationEnd(Animator animator) {
+            removeMask();
+          }
+
+          @Override public void onAnimationCancel(Animator animator) {}
+
+          @Override public void onAnimationRepeat(Animator animator) {}
+        })
+        .start();
+  }
+
+  private void removeMask() {
+    // get the center for the clipping circle
+    // create the animation (the final radius is zero)
+    Animator anim =
+        ViewAnimationUtils.createCircularReveal(mask, 0, 0, mask.getWidth(), 0);
+
+    // make the view invisible when the animation is done
+    anim.setDuration(400);
+    anim.addListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        super.onAnimationEnd(animation);
+        mask.setVisibility(View.INVISIBLE);
+      }
+    });
+
+    // start the animation
+    anim.start();
   }
 
   public void stopPlayback() {

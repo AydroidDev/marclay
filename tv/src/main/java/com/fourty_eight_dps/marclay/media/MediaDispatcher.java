@@ -26,6 +26,28 @@ public class MediaDispatcher implements ChildEventListener {
   private DownloadManager downloadManager;
   private VideoStorage videoStorage;
   private Context context;
+  private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+    @Override public void onReceive(Context context, Intent intent) {
+      long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+      if (keyToDownloadIdMap.containsKey(downloadId)) {
+        String videoId = keyToDownloadIdMap.remove(downloadId);
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadId);
+        Cursor cursor = downloadManager.query(query);
+        cursor.moveToFirst();
+
+        int statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+        if (cursor.getInt(statusIndex) == DownloadManager.STATUS_SUCCESSFUL) {
+          // Save File URI location.
+          int uriIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+          int fileNameIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
+          String uriLocation = cursor.getString(uriIndex);
+          String fileName = cursor.getString(fileNameIndex);
+          videoStorage.putVideo(videoId, fileName);
+        }
+      }
+    }
+  };
 
   /**
    * Maps an Android ID to a Video ID
@@ -36,36 +58,20 @@ public class MediaDispatcher implements ChildEventListener {
     this.context = context;
     this.downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
     this.videoStorage = new VideoStorage(context);
-
-    IntentFilter downloadCompleteFilter =
-        new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-    context.registerReceiver(new BroadcastReceiver() {
-      @Override public void onReceive(Context context, Intent intent) {
-        long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-        if (keyToDownloadIdMap.containsKey(downloadId)) {
-          String videoId = keyToDownloadIdMap.remove(downloadId);
-          DownloadManager.Query query = new DownloadManager.Query();
-          query.setFilterById(downloadId);
-          Cursor cursor = downloadManager.query(query);
-          cursor.moveToFirst();
-
-          int statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-          if (cursor.getInt(statusIndex) == DownloadManager.STATUS_SUCCESSFUL) {
-            // Save File URI location.
-            int uriIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-            int fileNameIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
-            String uriLocation = cursor.getString(uriIndex);
-            String fileName = cursor.getString(fileNameIndex);
-            videoStorage.putVideo(videoId, fileName);
-          }
-        }
-      }
-    }, downloadCompleteFilter);
   }
 
-  public void onCreate() {
+  public void onStart() {
+    IntentFilter downloadCompleteFilter =
+        new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+    context.registerReceiver(downloadReceiver, downloadCompleteFilter);
+
     videos = FirebaseRefs.videos();
     videos.addChildEventListener(this);
+  }
+
+  public void onStop(){
+    context.unregisterReceiver(downloadReceiver);
+    videos.removeEventListener(this);
   }
 
   public File nextVideo() {
