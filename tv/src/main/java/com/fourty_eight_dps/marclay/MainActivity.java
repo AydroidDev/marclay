@@ -22,6 +22,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.fourty_eight_dps.marclay.core.firebase.RemoteNotificationManager;
 import com.fourty_eight_dps.marclay.core.firebase.SyncedNotification;
+import com.fourty_eight_dps.marclay.core.firebase.Video;
 import com.fourty_eight_dps.marclay.media.MediaDispatcher;
 import com.fourty_eight_dps.marclay.playback.MoviePlayer;
 import com.fourty_eight_dps.marclay.playback.SpeedControlCallback;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity
   @Bind(R.id.texture) TextureView textureView;
   @Bind(android.R.id.list) RecyclerView recyclerView;
   @Bind(R.id.weather) TextView weather;
+  @Bind(R.id.location) TextView location;
   @Bind(android.R.id.progress) View progress;
   @Bind(R.id.gradient) View gradient;
   @Bind(R.id.mask) View mask;
@@ -176,6 +178,8 @@ public class MainActivity extends AppCompatActivity
     File nextVideo = mediaDispatcher.nextVideo();
     if (nextVideo != null) {
       try {
+        updateMetaData(mediaDispatcher.getCurrentVideo());
+
         endProgressLoading();
         MoviePlayer player = null;
         SpeedControlCallback callback = new SpeedControlCallback();
@@ -193,6 +197,11 @@ public class MainActivity extends AppCompatActivity
         }
       }, DELAY_TEN_SECONDS);
     }
+  }
+
+  private void updateMetaData(Video currentVideo) {
+    if (currentVideo == null) {return;}
+    location.setText(currentVideo.getLocation());
   }
 
   private void endProgressLoading() {

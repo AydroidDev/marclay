@@ -31,6 +31,10 @@ public class MediaDispatcher implements ChildEventListener, ValueEventListener {
   private DownloadManager downloadManager;
   private VideoStorage videoStorage;
   private Context context;
+  /**
+   * Maps an Android ID to a Video ID
+   */
+  private Map<Long, String> keyToDownloadIdMap = new HashMap<>();
   private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
     @Override public void onReceive(Context context, Intent intent) {
       long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
@@ -53,12 +57,8 @@ public class MediaDispatcher implements ChildEventListener, ValueEventListener {
       }
     }
   };
-
-  /**
-   * Maps an Android ID to a Video ID
-   */
-  private Map<Long, String> keyToDownloadIdMap = new HashMap<>();
   private Iterator<DataSnapshot> cycleIterator;
+  private Video currentVideo;
 
   public MediaDispatcher(Context context) {
     this.context = context;
@@ -89,11 +89,16 @@ public class MediaDispatcher implements ChildEventListener, ValueEventListener {
     while (cycleIterator.hasNext()) {
       DataSnapshot snapshot = cycleIterator.next();
       if (videoStorage.hasVideo(snapshot.getKey())) {
+        currentVideo = snapshot.getValue(Video.class);
         return videoStorage.getVideo(snapshot.getKey());
       }
     }
 
     return null;
+  }
+
+  public Video getCurrentVideo() {
+    return currentVideo;
   }
 
   @Override public void onChildAdded(DataSnapshot dataSnapshot, String s) {
