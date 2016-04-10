@@ -6,6 +6,12 @@ public class Video {
   String location;
   int hour;
 
+  public Video() {}
+
+  public Video(int hour) {
+    this.hour = hour;
+  }
+
   public String getUrl() {
     return url;
   }

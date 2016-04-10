@@ -14,12 +14,8 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.fourty_eight_dps.marclay.core.firebase.FirebaseRefs;
 import com.fourty_eight_dps.marclay.core.firebase.Video;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +27,9 @@ public class MediaDispatcher implements ChildEventListener, ValueEventListener {
   private DownloadManager downloadManager;
   private VideoStorage videoStorage;
   private Context context;
+  private Video currentVideo;
+  private NearestHourScheduler nearestHourScheduler;
+
   /**
    * Maps an Android ID to a Video ID
    */
@@ -57,8 +56,6 @@ public class MediaDispatcher implements ChildEventListener, ValueEventListener {
       }
     }
   };
-  private Iterator<DataSnapshot> cycleIterator;
-  private Video currentVideo;
 
   public MediaDispatcher(Context context) {
     this.context = context;
@@ -83,15 +80,13 @@ public class MediaDispatcher implements ChildEventListener, ValueEventListener {
   }
 
   public File nextVideo() {
-    if (cycleIterator == null) {return null;}
+    if (nearestHourScheduler == null) {return null;}
 
-    // Iterate to the next available stored video
-    while (cycleIterator.hasNext()) {
-      DataSnapshot snapshot = cycleIterator.next();
-      if (videoStorage.hasVideo(snapshot.getKey())) {
-        currentVideo = snapshot.getValue(Video.class);
-        return videoStorage.getVideo(snapshot.getKey());
-      }
+    // Attempt to use the closest hour.
+    DataSnapshot snapshot = nearestHourScheduler.closestToCurrentHour();
+    if (snapshot != null && videoStorage.hasVideo(snapshot.getKey())) {
+      currentVideo = snapshot.getValue(Video.class);
+      return videoStorage.getVideo(snapshot.getKey());
     }
 
     return null;
@@ -124,8 +119,7 @@ public class MediaDispatcher implements ChildEventListener, ValueEventListener {
   @Override public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
 
   @Override public void onDataChange(DataSnapshot dataSnapshot) {
-    List<DataSnapshot> snapshots = Lists.newArrayList(dataSnapshot.getChildren());
-    cycleIterator = Iterators.cycle(snapshots);
+    nearestHourScheduler = new NearestHourScheduler(dataSnapshot.getChildren());
   }
 
   @Override public void onCancelled(FirebaseError firebaseError) {}
