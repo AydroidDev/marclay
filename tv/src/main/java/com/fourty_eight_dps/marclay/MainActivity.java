@@ -134,9 +134,15 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void playNotificationSound() {
+    if (isLoading()) { return; }
+
     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
     r.play();
+  }
+
+  private boolean isLoading() {
+    return progress.getVisibility() == View.VISIBLE;
   }
 
   @Override public void onNotificationRemoved(SyncedNotification syncedNotification) {
@@ -200,6 +206,7 @@ public class MainActivity extends AppCompatActivity
           @Override public void onAnimationStart(Animator animator) {}
 
           @Override public void onAnimationEnd(Animator animator) {
+            progress.setVisibility(View.GONE);
             removeMask();
           }
 
