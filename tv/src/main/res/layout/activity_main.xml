@@ -19,29 +19,17 @@
       android:fontFamily="sans-serif-light"
       android:textSize="30sp"
       />
-  <LinearLayout
+
+  <TextView
+      android:id="@+id/weather"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom|right"
       android:layout_margin="40dp"
-      android:orientation="vertical"
-      >
-    <TextView
-        android:id="@+id/weather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:fontFamily="sans-serif-light"
-        android:textSize="30sp"
-        tools:text="80\u00B0"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alpha=".7"
-        android:text="Location"
-        />
-  </LinearLayout>
+      android:fontFamily="sans-serif-light"
+      android:textSize="30sp"
+      tools:text="80\u00B0"
+      />
 
   <FrameLayout
       android:layout_width="match_parent"
