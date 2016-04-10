@@ -11,16 +11,21 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.fourty_eight_dps.marclay.core.firebase.FirebaseRefs;
 import com.fourty_eight_dps.marclay.core.firebase.Video;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Handles Pinning and Sync folder contents from Google Drive
  */
-public class MediaDispatcher implements ChildEventListener {
+public class MediaDispatcher implements ChildEventListener, ValueEventListener {
 
   private Firebase videos;
   private DownloadManager downloadManager;
@@ -53,6 +58,7 @@ public class MediaDispatcher implements ChildEventListener {
    * Maps an Android ID to a Video ID
    */
   private Map<Long, String> keyToDownloadIdMap = new HashMap<>();
+  private Iterator<DataSnapshot> cycleIterator;
 
   public MediaDispatcher(Context context) {
     this.context = context;
@@ -67,15 +73,27 @@ public class MediaDispatcher implements ChildEventListener {
 
     videos = FirebaseRefs.videos();
     videos.addChildEventListener(this);
+    videos.addValueEventListener(this);
   }
 
-  public void onStop(){
+  public void onStop() {
     context.unregisterReceiver(downloadReceiver);
-    videos.removeEventListener(this);
+    videos.removeEventListener((ChildEventListener) this);
+    videos.removeEventListener((ValueEventListener) this);
   }
 
   public File nextVideo() {
-    return videoStorage.next();
+    if (cycleIterator == null) {return null;}
+
+    // Iterate to the next available stored video
+    while (cycleIterator.hasNext()) {
+      DataSnapshot snapshot = cycleIterator.next();
+      if (videoStorage.hasVideo(snapshot.getKey())) {
+        return videoStorage.getVideo(snapshot.getKey());
+      }
+    }
+
+    return null;
   }
 
   @Override public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -99,6 +117,11 @@ public class MediaDispatcher implements ChildEventListener {
   }
 
   @Override public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+  @Override public void onDataChange(DataSnapshot dataSnapshot) {
+    List<DataSnapshot> snapshots = Lists.newArrayList(dataSnapshot.getChildren());
+    cycleIterator = Iterators.cycle(snapshots);
+  }
 
   @Override public void onCancelled(FirebaseError firebaseError) {}
 }
