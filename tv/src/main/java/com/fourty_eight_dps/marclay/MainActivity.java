@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
     implements RemoteNotificationManager.NotificationListener, TextureView.SurfaceTextureListener,
     MoviePlayer.PlayerFeedback {
 
-  public static final long DELAY_TEN_SECONDS = SECONDS.toMillis(10);
+  public static final long DELAY_FIVE_SECONDS = SECONDS.toMillis(5);
   public static final long DELAY_ONE_MINUTE = MINUTES.toMillis(1);
 
   MoviePlayer.PlayTask playTask;
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity
         @Override public void run() {
           enqueueNext();
         }
-      }, DELAY_TEN_SECONDS);
+      }, DELAY_FIVE_SECONDS);
     }
   }
 
