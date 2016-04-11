@@ -61,8 +61,8 @@
         android:id="@android:id/list"
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="40dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="40dp"
         tools:listitem="@layout/item_notificaton"
         />
   </FrameLayout>
