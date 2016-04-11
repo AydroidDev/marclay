@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Switch;
 import butterknife.Bind;
@@ -30,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private boolean hasNotificationsEnabled() {
-    return Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners")
-        .contains(getApplicationContext().getPackageName());
+    String notificationSetting =
+        Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
+    return !TextUtils.isEmpty(notificationSetting) && notificationSetting.contains(
+        getApplicationContext().getPackageName());
   }
 
   @OnClick(R.id.switch_notification)
