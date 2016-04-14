@@ -9,5 +9,5 @@ Create a `gradle.properties` file in the root of the repository to provide confi
 
 ```
 open_weather_api_key="API_KEY"
-firebase_app="APP_NAME"
+firebase_app_name="APP_NAME"
 ```
