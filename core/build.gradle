@@ -16,6 +16,9 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       buildConfigField 'String', 'FIREBASE_APP_NAME', "${firebase_app_name}"
     }
+    debug {
+      buildConfigField 'String', 'FIREBASE_APP_NAME', "${firebase_app_name}"
+    }
   }
 }
 
