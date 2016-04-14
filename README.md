@@ -12,7 +12,7 @@ open_weather_api_key="API_KEY"
 firebase_app_name="APP_NAME"
 ```
 
-Import this example schema into your Firebase app to load sample videos. They are downloaded to your Android TV on the first launch. 
+Import this example schema into your Firebase app to load sample videos. Videos are downloaded to your Android TV on the first launch. 
 
 ```
 {
